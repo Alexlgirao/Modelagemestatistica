@@ -1,0 +1,49 @@
+library(ggcorrplot)
+library(nortest)
+library(lmtest)
+
+df <- mtcars
+mod <- lm(hp~., data = df)
+summary(mod)
+cor(df)
+cormat<-signif(cor(df),2) #facilitar ver a correlação somente com 2 casas decimais
+cormat
+ggcorrplot(cormat, hc.order = TRUE, type = "lower",
+           lab = TRUE)                      # grafico das correlações
+
+mod2 <-  step(mod, direction = "backward")  
+summary(mod2)
+
+mod3 <- lm(hp ~ disp + wt + carb, data = df) #modelo ajustado
+summary(mod3)
+anares <- rstandard(mod3)
+
+qqnorm(anares, ylab = "Residuos", xlab = "Quantis", main = "QQplot")
+qqline(anares)
+
+bptest(mod3)
+ad.test(anares)
+
+fit <- fitted.values(mod3)
+plot(fit,anares, ylab = "Residuos", xlab = "Valores Ajustados", main = "Homocedasticidade")
+abline(0,0)
+
+dwtest(mod3)
+
+plot(anares)
+abline(0,0)
+
+aov(mod3)
+par(mfrow=c(2,2))
+av <- aov(mod3)
+plot(av)
+plot(mod3)
+
+##### teste do modelo 
+
+nd <- data.frame(disp=280 , wt = 2.620, carb = 3) #testes com valores aleatórios das variaveis
+test <- predict(mod3,nd, interval = "confidence")
+test
+nd2 <- data.frame(disp=79 , wt = 1.935, carb = 1) #teste com o valor do Fiat X1-9 
+test2 <- predict(mod3,nd2, interval = "confidence")
+test2 # resultado do teste bem perto do valor original 
