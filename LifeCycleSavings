@@ -1,0 +1,41 @@
+library(ggcorrplot)
+library(nortest)
+library(lmtest)
+df <- LifeCycleSavings
+
+mod <-lm(sr ~ pop15 + pop75 + dpi + ddpi, data = df)
+summary(mod)
+cormat<-signif(cor(df),2)
+ggcorrplot(cormat, hc.order = TRUE, type = "lower",
+           lab = TRUE)                      # grafico das correlações
+
+mod2 <- lm(sr ~ pop15 + ddpi, data=df)
+summary(mod2)
+
+anares <- rstandard(mod2)
+qqnorm(anares, ylab = "Residuos", xlab = "Quantis", main = "QQplot")
+qqline(anares)
+
+#testes
+bptest(mod2)
+dwtest(mod2)
+ad.test(anares)
+
+fit <- fitted.values(mod2)
+
+plot(fit,anares, ylab = "Residuos", xlab = "Valores Ajustados", main = "Homocedasticidade")
+abline(0,0)
+vif(mod2)
+
+plot(anares)
+abline(0,0)
+
+aov(mod2)
+par(mfrow=c(2,2))
+av <- aov(mod2)
+plot(av)
+
+predict(mod2,df, interval = "confidence")
+
+#O suporte do modelo é bastante fraco , somente 2 variaveis são significantes e o r-square do modelo é bem baixo e nao convence no modelo
+#
