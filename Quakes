@@ -1,0 +1,34 @@
+library(nortest)
+library(lmtest)
+library(MASS)
+library(faraway)
+df <-  quakes
+cor(df)
+mod <-lm(mag~., data= df)
+summary(mod)
+#mod3 <- lm(mag ~ log(depth) + long + stations , data = df)
+mod2 <- lm(mag ~ depth + long, data = df)
+summary(mod2)
+#nova(mod2,mod3)
+#boxcox(mag ~ depth + long, data = df )
+anares <- rstandard(mod2)
+qqnorm(anares, ylab = "Residuos", xlab = "Quantis", main = "QQplot")
+qqline(anares)
+#testes
+bptest(mod2)
+dwtest(mod2)
+ad.test(anares)
+fit <- fitted.values(mod2)
+
+plot(fit,anares, ylab = "Residuos", xlab = "Valores Ajustados", main = "Homocedasticidade")
+abline(0,0)
+
+
+plot(anares)
+abline(0,0)
+
+aov(mod2)
+par(mfrow=c(2,2))
+av <- aov(mod2)
+plot(av)
+
