@@ -1,0 +1,35 @@
+library(nortest)
+library(lmtest)
+library(MASS)
+library(faraway)
+df <-  swiss
+cor(df)
+mod <-lm(Fertility~., data= df)
+summary(mod)
+mod2 <-  step(mod, direction = "backward")  
+summary(mod2)
+mod3 <-  lm(Fertility ~ Agriculture + Education + Catholic + Infant.Mortality, data = df)
+summary(mod3)
+
+anares <- rstandard(mod3)
+bptest(mod3)
+dwtest(mod3)
+ad.test(anares)
+qqnorm(anares, ylab = "Residuos", xlab = "Quantis", main = "QQplot")
+qqline(anares)
+fit <- fitted.values(mod3)
+
+plot(fit,anares, ylab = "Residuos", xlab = "Valores Ajustados", main = "Homocedasticidade")
+abline(0,0)
+
+
+plot(anares)
+abline(0,0)
+
+aov(mod3)
+par(mfrow=c(2,2))
+av <- aov(mod3)
+plot(av)
+
+test <- predict(mod3,df, interval = "confidence")
+head(test)
