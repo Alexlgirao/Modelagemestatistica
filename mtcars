@@ -14,7 +14,7 @@ ggcorrplot(cormat, hc.order = TRUE, type = "lower",
 mod2 <-  step(mod, direction = "backward")  
 summary(mod2)
 
-mod3 <- lm(hp ~ disp + wt + carb, data = df) #modelo ajustado
+mod3 <- lm(log(hp) ~ disp + carb, data = df) #modelo ajustado
 summary(mod3)
 anares <- rstandard(mod3)
 
@@ -41,9 +41,6 @@ plot(mod3)
 
 ##### teste do modelo 
 
-nd <- data.frame(disp=280 , wt = 2.620, carb = 3) #testes com valores aleatórios das variaveis
-test <- predict(mod3,nd, interval = "confidence")
-test
-nd2 <- data.frame(disp=79 , wt = 1.935, carb = 1) #teste com o valor do Fiat X1-9 
-test2 <- predict(mod3,nd2, interval = "confidence")
-test2 # resultado do teste bem perto do valor original 
+exp(predict(mod3,df, interval = "confidence"))
+
+
