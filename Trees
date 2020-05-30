@@ -1,0 +1,32 @@
+library(ggcorrplot)
+library(nortest)
+library(lmtest)
+library(MASS)
+library(faraway)
+
+df <- trees
+mod <- lm(Volume~. , data = df)
+summary(mod)
+boxcox(mod, lambda = seq(0.1,0.8, 1/10), plotit = TRUE, data=df)
+mod <- lm(Volume^0.3 ~ Girth + Height, data = df)
+par(mfrow=c(2,2))
+anares <- rstandard(mod)
+qqnorm(anares, ylab = "Residuos", xlab = "Quantis", main = "QQplot")
+qqline(anares)
+
+bptest(mod)
+dwtest(mod)
+ad.test(anares)
+
+fit <- fitted.values(mod)
+
+plot(fit,anares, ylab = "Residuos", xlab = "Valores Ajustados", main = "Homocedasticidade")
+abline(0,0)
+
+aov(mod)
+par(mfrow=c(2,2))
+av <- aov(mod)
+plot(av)
+
+test <- predict(mod,df, interval = "confidence")
+head(test)
